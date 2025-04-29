@@ -82,7 +82,7 @@ export default function FileSidebar() {
                         }
                       }}
                       variant={f.id === activeFileId ? 'default' : 'ghost'}
-                      className="flex-1 truncate text-left"
+                      className="flex-1 max-w-[200px] truncate text-left"
                       aria-label={`Select ${f.name}`}
                     >
                       {f.name}
@@ -96,6 +96,7 @@ export default function FileSidebar() {
                               variant="ghost"
                               onClick={() => handleDelete(f.id)}
                               aria-label={`Delete ${f.name}`}
+                              
                             >
                               <Trash2 className="h-4 w-4 text-red-500" />
                             </Button>

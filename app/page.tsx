@@ -1,12 +1,16 @@
 "use client";
 import FileDrop from '@/components/FileDrop';
 import FileSidebar from '@/components/FileSidebar';
-import { useLoadFiles, useAddFile } from '@/lib/fileStore';
+import LexicalViewer from '@/components/LexicalViewer';
+import { useLoadFiles, useAddFile, useFiles, useActiveFileId } from '@/lib/fileStore';
 import { useEffect } from 'react';
 
 export default function Home() {
   const loadFiles = useLoadFiles();
   const addFile = useAddFile();
+  const files = useFiles();
+  const activeFileId = useActiveFileId();
+  const activeFile = files.find(f => f.id === activeFileId);
 
   useEffect(() => {
     loadFiles();
@@ -28,7 +32,14 @@ export default function Home() {
     <div className="flex min-h-screen">
       <FileSidebar />
       <main className="flex-1 p-8 max-w-4xl mx-auto">
-        <FileDrop onRead={handleRead} />
+        {activeFile ? (
+          <LexicalViewer markdown={activeFile.content} />
+        ) : (
+          <>
+            <FileDrop onRead={handleRead} />
+            <p className="text-gray-500 p-4">Select a file to view or drop a new file</p>
+          </>
+        )}
       </main>
     </div>
   );
