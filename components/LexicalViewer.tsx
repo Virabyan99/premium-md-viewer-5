@@ -1,24 +1,35 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
-import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
-import { $convertFromMarkdownString } from '@lexical/markdown';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $convertFromMarkdownString, $convertToMarkdownString } from '@lexical/markdown';
 import { CodeNode, CodeHighlightNode } from '@lexical/code';
 import { HeadingNode } from '@lexical/rich-text';
 import { ListNode, ListItemNode } from '@lexical/list';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { toast } from 'sonner';
+
+// Dynamic imports for SSR compatibility
+const RichTextPlugin = dynamic(
+  () => import('@lexical/react/LexicalRichTextPlugin').then((mod) => mod.RichTextPlugin),
+  { ssr: false }
+);
+const HistoryPlugin = dynamic(
+  () => import('@lexical/react/LexicalHistoryPlugin').then((mod) => mod.HistoryPlugin),
+  { ssr: false }
+);
 
 interface LexicalViewerProps {
   markdown: string;
+  isEditable?: boolean;
+  onChange?: (markdown: string) => void;
 }
 
-function MarkdownLoader({ markdown }: { markdown: string }) {
+function MarkdownLoader({ markdown, isEditable }: { markdown: string; isEditable: boolean }) {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
-    if (!markdown) return;
+    if (!markdown || isEditable) return; // Skip loading if editable or no markdown
     try {
       editor.update(() => {
         $convertFromMarkdownString(markdown);
@@ -28,7 +39,27 @@ function MarkdownLoader({ markdown }: { markdown: string }) {
         description: 'Failed to render Markdown',
       });
     }
-  }, [markdown, editor]);
+  }, [markdown, editor, isEditable]);
+  return null;
+}
+
+function MarkdownChangeHandler({ onChange }: { onChange: (markdown: string) => void }) {
+  const [editor] = useLexicalComposerContext();
+  useEffect(() => {
+    const unregister = editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        try {
+          const markdown = $convertToMarkdownString();
+          onChange(markdown);
+        } catch (error) {
+          toast.error('Error', {
+            description: 'Failed to convert to Markdown',
+          });
+        }
+      });
+    });
+    return () => unregister();
+  }, [editor, onChange]);
   return null;
 }
 
@@ -88,11 +119,17 @@ const theme = {
   },
 };
 
-export default function LexicalViewer({ markdown }: LexicalViewerProps) {
+export default function LexicalViewer({
+  markdown,
+  isEditable = false,
+  onChange,
+}: LexicalViewerProps) {
+  const [hasFocus, setHasFocus] = useState(false);
+
   const initialConfig = {
     namespace: 'MarkdownViewer',
     nodes: [CodeNode, CodeHighlightNode, HeadingNode, ListNode, ListItemNode],
-    editable: false,
+    editable: isEditable,
     theme,
     onError: (error: Error) => {
       toast.error('Error', {
@@ -104,20 +141,27 @@ export default function LexicalViewer({ markdown }: LexicalViewerProps) {
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <RichTextPlugin
-        contentEditable={
-          <ContentEditable
-            className="prose max-w-none p-4"
-            aria-label="Markdown content"
-            role="textbox"
-            readOnly
-          />
-        }
-        placeholder={<div className="text-gray-400 p-4">No content</div>}
-        ErrorBoundary={() => <div>Error rendering content</div>}
-      />
-      <HistoryPlugin />
-      <MarkdownLoader markdown={markdown} />
+      <div
+        className={`relative ${hasFocus ? 'ring-2 ring-blue-500' : ''}`}
+        onFocus={() => setHasFocus(true)}
+        onBlur={() => setHasFocus(false)}
+      >
+        <RichTextPlugin
+          contentEditable={
+            <ContentEditable
+              className="prose max-w-none p-4"
+              aria-label={isEditable ? 'Editable Markdown content' : 'Markdown content'}
+              role="textbox"
+              readOnly={!isEditable}
+            />
+          }
+          placeholder={<div className="text-gray-400 p-4">No content</div>}
+          ErrorBoundary={() => <div>Error rendering content</div>}
+        />
+        <HistoryPlugin />
+        <MarkdownLoader markdown={markdown} isEditable={isEditable} />
+        {isEditable && onChange && <MarkdownChangeHandler onChange={onChange} />}
+      </div>
     </LexicalComposer>
   );
 }

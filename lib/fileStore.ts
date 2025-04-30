@@ -29,11 +29,23 @@ export const useFileStore = create<State>((set, get) => ({
 
   addFile: async (file) => {
     try {
-      await db.files.put(file);
-      set((s) => ({
-        files: [...s.files, file],
-        activeFileId: file.id,
-      }));
+      await db.files.put(file); // This will insert or update the file in IndexedDB
+      set((state) => {
+        const existingIndex = state.files.findIndex(f => f.id === file.id);
+        let updatedFiles;
+        if (existingIndex !== -1) {
+          // Update existing file
+          updatedFiles = [...state.files];
+          updatedFiles[existingIndex] = file;
+        } else {
+          // Add new file
+          updatedFiles = [...state.files, file];
+        }
+        return {
+          files: updatedFiles,
+          activeFileId: file.id,
+        };
+      });
     } catch (error) {
       toast.error('Error', {
         description: 'Failed to save file',
