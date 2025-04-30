@@ -102,10 +102,27 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <>
+          <div className="flex flex-col items-center justify-center h-full gap-4 text-gray-500">
+            <svg
+              className="w-24 h-24"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 21h10a2 2 0 002-2V9l-7-7H7a2 2 0 00-2 2v16a2 2 0 002 2z"
+              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 3v6h6" />
+            </svg>
+            <p className="text-center max-w-xs">
+              Drag & drop a Markdown file or click the box to browse.
+            </p>
             <FileDrop onRead={handleRead} />
-            <p className="text-gray-500 p-4">Select a file to view or drop a new file</p>
-          </>
+          </div>
         )}
       </main>
     </div>

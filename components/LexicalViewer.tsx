@@ -66,16 +66,16 @@ function MarkdownChangeHandler({ onChange }: { onChange: (markdown: string) => v
 const theme = {
   paragraph: 'text-gray-800 dark:text-gray-200',
   heading: {
-    h1: 'text-3xl font-bold mb-4 text-gray-900 dark:text-gray-100',
-    h2: 'text-2xl font-bold mb-3 text-gray-900 dark:text-gray-100',
-    h3: 'text-xl font-bold mb-2 text-gray-900 dark:text-gray-100',
-    h4: 'text-lg font-bold mb-2 text-gray-900 dark:text-gray-100',
-    h5: 'text-base font-bold mb-2 text-gray-900 dark:text-gray-100',
-    h6: 'text-sm font-bold mb-2 text-gray-900 dark:text-gray-100',
+    h1: 'text-3xl my-5 font-bold text-gray-900 dark:text-gray-100',
+    h2: 'text-2xl my-4 font-bold text-gray-900 dark:text-gray-100',
+    h3: 'text-xl my-3 font-bold text-gray-900 dark:text-gray-100',
+    h4: 'text-lg my-2 font-bold text-gray-900 dark:text-gray-100',
+    h5: 'text-base my-1 font-bold text-gray-900 dark:text-gray-100',
+    h6: 'text-sm font-bold text-gray-900 dark:text-gray-100',
   },
   list: {
-    ul: 'list-disc pl-6 mb-4 text-gray-800 dark:text-gray-200',
-    ol: 'list-decimal pl-6 mb-4 text-gray-800 dark:text-gray-200',
+    ul: 'list-disc my-2 pl-6 text-gray-800 dark:text-gray-200',
+    ol: 'list-decimal my-2 pl-6 text-gray-800 dark:text-gray-200',
     nested: { listitem: 'pl-6' },
   },
   code: 'bg-gray-100 dark:bg-gray-800 rounded p-1 font-mono text-sm text-gray-800 dark:text-gray-200 inline-block',
@@ -142,14 +142,14 @@ export default function LexicalViewer({
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div
-        className={`relative ${hasFocus ? 'ring-2 ring-blue-500' : ''}`}
+        className={`relative prose  prose-gray max-w-none ${hasFocus ? 'ring-2 ring-blue-500' : ''}`}
         onFocus={() => setHasFocus(true)}
         onBlur={() => setHasFocus(false)}
       >
         <RichTextPlugin
           contentEditable={
             <ContentEditable
-              className="prose max-w-none p-4"
+              className="p-4"
               aria-label={isEditable ? 'Editable Markdown content' : 'Markdown content'}
               role="textbox"
               readOnly={!isEditable}

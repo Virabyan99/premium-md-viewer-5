@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&family=Noto+Sans+JP&family=Noto+Sans+SC&display=swap');
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -117,15 +117,40 @@
   background-color: #f3f4f6; /* Matches bg-gray-100 */
   padding: 0.5rem;
   border-radius: 0.25rem;
+  overflow-x: auto;
 }
 
 .dark .prose pre {
   background-color: #1f2a44; /* Matches dark:bg-gray-800 */
 }
 
+/* Style inline code */
+.prose code {
+  background-color: #f3f4f6;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.dark .prose code {
+  background-color: #1f2a44;
+}
+
 /* Prevent spans from applying their own backgrounds */
 .prose pre code span {
   background-color: transparent !important;
+}
+
+/* Apply language-specific fonts */
+.font-kr {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.font-jp {
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.font-sc {
+  font-family: 'Noto Sans SC', sans-serif;
 }
 
 @layer base {
