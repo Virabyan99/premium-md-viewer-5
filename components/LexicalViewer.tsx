@@ -78,7 +78,7 @@ const theme = {
     ol: 'list-decimal pl-6 mb-4 text-gray-800 dark:text-gray-200',
     nested: { listitem: 'pl-6' },
   },
-  code: 'bg-gray-100 dark:bg-gray-800 rounded p-1 font-mono text-sm text-gray-800 dark:text-gray-200',
+  code: 'bg-gray-100 dark:bg-gray-800 rounded p-1 font-mono text-sm text-gray-800 dark:text-gray-200 inline-block',
   text: {
     bold: 'font-bold',
     italic: 'italic',

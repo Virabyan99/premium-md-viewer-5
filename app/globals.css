@@ -112,6 +112,22 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+/* Ensure the code block container has a consistent background */
+.prose pre {
+  background-color: #f3f4f6; /* Matches bg-gray-100 */
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.dark .prose pre {
+  background-color: #1f2a44; /* Matches dark:bg-gray-800 */
+}
+
+/* Prevent spans from applying their own backgrounds */
+.prose pre code span {
+  background-color: transparent !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
